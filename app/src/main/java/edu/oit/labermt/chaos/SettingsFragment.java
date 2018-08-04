@@ -1,12 +1,16 @@
 package edu.oit.labermt.chaos;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -20,6 +24,9 @@ import android.view.ViewGroup;
 public class SettingsFragment extends Fragment {
 
     private static final String TAG = "SettingsFragment";
+
+    private Button button_;
+    // private SharedViewModel sharedViewModel_;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,7 +74,30 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        final SharedViewModel sharedViewModel_;
+        sharedViewModel_ = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
+        button_ = layout.findViewById(R.id.button);
+        button_.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                SharedViewModel.UIData uiData = new SharedViewModel.UIData();
+                uiData.setValue(43);
+                sharedViewModel_.uiDataLiveData_.postValue(uiData);
+            }
+        });
+        sharedViewModel_.uiDataLiveData_.observe(getActivity(), new Observer<SharedViewModel.UIData>() {
+            @Override
+            public void onChanged(@Nullable SharedViewModel.UIData value) {
+                if (value != null) {
+                    // mSeekBar.setProgress(value);
+                }
+            }
+        });
+
+        return layout;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

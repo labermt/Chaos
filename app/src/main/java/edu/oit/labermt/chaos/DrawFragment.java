@@ -1,12 +1,16 @@
 package edu.oit.labermt.chaos;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -20,6 +24,9 @@ import android.view.ViewGroup;
 public class DrawFragment extends Fragment {
 
     private static final String TAG = "DrawFragment";
+
+    // private SharedViewModel sharedViewModel_;
+    private TextView textView_;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,8 +74,24 @@ public class DrawFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View result= inflater.inflate(R.layout.fragment_draw, container, false);
-        return result;
+        final View layout= inflater.inflate(R.layout.fragment_draw, container, false);
+        textView_ = layout.findViewById(R.id.text_view);
+
+        SharedViewModel sharedViewModel_;
+        sharedViewModel_ = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+        sharedViewModel_.uiDataLiveData_.observe(getActivity(), new Observer<SharedViewModel.UIData>() {
+            @Override
+            public void onChanged(@Nullable SharedViewModel.UIData value) {
+                if (value != null) {
+                    final int an_int = value.getValue();
+                    final String text = String.valueOf(an_int);
+                    textView_.setText(text);
+                    // mSeekBar.setProgress(value);
+                }
+            }
+        });
+
+        return layout;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
